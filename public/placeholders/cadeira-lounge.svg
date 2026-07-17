@@ -1,0 +1,19 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F5F2EC"/>
+  <g fill="none" stroke="#24211D" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- encosto -->
+    <path d="M140 110 Q130 110 130 125 V230 Q130 245 145 245 H255 Q270 245 270 230 V125 Q270 110 260 110 Z"/>
+    <!-- assento -->
+    <path d="M130 230 Q130 260 160 260 H240 Q270 260 270 230"/>
+    <!-- braços -->
+    <path d="M100 190 Q95 190 95 205 V235 Q95 250 110 250 H130"/>
+    <path d="M300 190 Q305 190 305 205 V235 Q305 250 290 250 H270"/>
+  </g>
+  <g stroke="#B08D57" stroke-width="3" stroke-linecap="round">
+    <!-- pernas em latão -->
+    <line x1="150" y1="260" x2="135" y2="305"/>
+    <line x1="250" y1="260" x2="265" y2="305"/>
+    <line x1="150" y1="260" x2="165" y2="300"/>
+    <line x1="250" y1="260" x2="235" y2="300"/>
+  </g>
+</svg>

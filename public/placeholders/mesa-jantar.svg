@@ -1,0 +1,18 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#F5F2EC"/>
+  <g fill="none" stroke="#24211D" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- tampo da mesa -->
+    <ellipse cx="200" cy="160" rx="140" ry="26"/>
+    <path d="M60 160 V172 Q60 186 90 190 H310 Q340 186 340 172 V160"/>
+    <!-- cadeiras simplificadas -->
+    <path d="M60 230 V270 M60 230 Q60 220 72 220 Q84 220 84 230 V270" />
+    <path d="M316 230 V270 M316 230 Q316 220 328 220 Q340 220 340 230 V270" />
+  </g>
+  <g stroke="#B08D57" stroke-width="3" stroke-linecap="round">
+    <!-- pernas da mesa -->
+    <line x1="100" y1="188" x2="105" y2="290"/>
+    <line x1="300" y1="188" x2="295" y2="290"/>
+    <line x1="150" y1="192" x2="152" y2="295"/>
+    <line x1="250" y1="192" x2="248" y2="295"/>
+  </g>
+</svg>

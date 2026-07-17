@@ -1,0 +1,16 @@
+logotipo.png -> já colocado (o teu ficheiro real). Já está ligado no cabeçalho (app/layout.tsx).
+
+Ainda faltam fotos reais (por agora o site usa ilustrações genéricas em /public/placeholders):
+- hero-1.jpg                      -> foto grande para a página inicial (sala com sofá/mobiliário)
+- categoria-cadeiras.jpg
+- categoria-cadeiras-lounge.jpg
+- categoria-mesas-consolas.jpg
+- categoria-mesas-jantar.jpg
+- categoria-sofas.jpg
+- fotos dos produtos (substituir os caminhos /placeholders/*.svg em prisma/seed.ts
+  ou diretamente no backoffice ao criar/editar cada produto)
+
+Quando tiveres as fotos reais, troca:
+- app/page.tsx           -> imagem de fundo do hero (linha com "/placeholders/hero.svg")
+- prisma/seed.ts          -> caminhos das imagens dos produtos de exemplo
+- ou simplesmente faz upload de imagens novas em cada produto no backoffice (/admin/produtos/novo)

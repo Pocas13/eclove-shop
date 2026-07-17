@@ -1,0 +1,143 @@
+// Schema da base de dados — PostgreSQL + Prisma
+// Correr: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENTE       // consumidor final (B2C)
+  PROFISSIONAL  // revendedor / profissional (B2B)
+  ADMIN         // gestor do backoffice
+}
+
+enum ProfissionalEstado {
+  PENDENTE
+  APROVADO
+  REJEITADO
+}
+
+enum EncomendaEstado {
+  PENDENTE
+  PAGA
+  EM_PREPARACAO
+  ENVIADA
+  ENTREGUE
+  CANCELADA
+}
+
+enum TipoCliente {
+  B2C
+  B2B
+}
+
+model User {
+  id              String    @id @default(cuid())
+  nome            String
+  email           String    @unique
+  passwordHash    String
+  role            Role      @default(CLIENTE)
+  telefone        String?
+  nif             String?
+  // Dados de empresa, só para profissionais
+  empresaNome     String?
+  moradaFiscal    String?
+  profissionalEstado ProfissionalEstado?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  enderecos       Endereco[]
+  encomendas      Encomenda[]
+  carrinho        CarrinhoItem[]
+}
+
+model Endereco {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  linha1      String
+  linha2      String?
+  cidade      String
+  codigoPostal String
+  pais        String   @default("Portugal")
+  principal   Boolean  @default(false)
+}
+
+model Categoria {
+  id       String    @id @default(cuid())
+  nome     String    @unique
+  slug     String    @unique
+  produtos Produto[]
+}
+
+model Produto {
+  id                String   @id @default(cuid())
+  nome              String
+  slug              String   @unique
+  descricao         String
+  sku               String   @unique
+  categoriaId       String
+  categoria         Categoria @relation(fields: [categoriaId], references: [id])
+
+  // Preços — o profissional vê precoProfissional, o cliente final vê precoRetalho
+  precoRetalho      Decimal  @db.Decimal(10, 2)
+  precoProfissional Decimal  @db.Decimal(10, 2)
+  quantidadeMinimaB2B Int    @default(1) // qtd mínima para encomenda profissional
+
+  stock             Int      @default(0)
+  material          String?
+  largura_cm        Int?
+  altura_cm         Int?
+  profundidade_cm   Int?
+  imagens           String[] // URLs das imagens
+  ativo             Boolean  @default(true)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  itensCarrinho     CarrinhoItem[]
+  itensEncomenda    EncomendaItem[]
+}
+
+model CarrinhoItem {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  produtoId  String
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  quantidade Int
+
+  @@unique([userId, produtoId])
+}
+
+model Encomenda {
+  id            String          @id @default(cuid())
+  numero        String          @unique // ex: ENC-2026-00001
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  tipoCliente   TipoCliente
+  estado        EncomendaEstado @default(PENDENTE)
+  total         Decimal         @db.Decimal(10, 2)
+  moradaEntrega String
+  nifFatura     String?
+  stripePaymentId String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  itens         EncomendaItem[]
+}
+
+model EncomendaItem {
+  id           String   @id @default(cuid())
+  encomendaId  String
+  encomenda    Encomenda @relation(fields: [encomendaId], references: [id])
+  produtoId    String
+  produto      Produto  @relation(fields: [produtoId], references: [id])
+  quantidade   Int
+  precoUnitario Decimal @db.Decimal(10, 2) // preço aplicado no momento da compra
+}
