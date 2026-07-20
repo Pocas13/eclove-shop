@@ -31,7 +31,7 @@ export async function POST(req: Request) {
   const role = (session.user as any).role;
   if (role !== "PROFISSIONAL" && role !== "ADMIN") {
     return NextResponse.json(
-      { erro: "A compra online está disponível apenas para contas profissionais. Pede um orçamento em /contacto." },
+      { erro: "A compra online está disponível apenas para contas de revenda aprovadas. Pede acesso em /registo-profissional." },
       { status: 403 }
     );
   }

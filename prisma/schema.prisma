@@ -70,9 +70,16 @@ model Endereco {
 
 model Categoria {
   id       String    @id @default(cuid())
-  nome     String    @unique
+  nome     String
   slug     String    @unique
+
+  parentId String?
+  parent   Categoria?  @relation("SubCategorias", fields: [parentId], references: [id])
+  subcategorias Categoria[] @relation("SubCategorias")
+
   produtos Produto[]
+
+  @@unique([nome, parentId])
 }
 
 model Produto {

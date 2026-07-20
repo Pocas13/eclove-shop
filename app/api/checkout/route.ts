@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
   const role = (session.user as any).role;
   if (role !== "PROFISSIONAL" && role !== "ADMIN") {
-    return NextResponse.json({ erro: "Só contas profissionais podem finalizar compra online." }, { status: 403 });
+    return NextResponse.json({ erro: "Só contas de revenda aprovadas podem finalizar compra online." }, { status: 403 });
   }
 
   const { moradaEntrega, nifFatura } = checkoutSchema.parse(await req.json());

@@ -53,12 +53,8 @@ export default function EntrarPage() {
 
       <p className="mt-6 text-sm text-tinta-500">
         Ainda não tens conta?{" "}
-        <Link href="/registo" className="underline">
-          Cria uma conta de cliente
-        </Link>{" "}
-        ou{" "}
         <Link href="/registo-profissional" className="underline">
-          pede uma conta profissional
+          Pede uma conta de revenda
         </Link>
         .
       </p>

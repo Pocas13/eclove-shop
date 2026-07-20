@@ -7,7 +7,7 @@ import Link from "next/link";
 export default async function CatalogoPage() {
   const session = await getServerSession(authOptions);
   const role = (session?.user as any)?.role;
-  const ehProfissional = role === "PROFISSIONAL";
+  const ehProfissional = role === "PROFISSIONAL" || role === "ADMIN";
 
   const produtos = await prisma.produto.findMany({
     where: { ativo: true },
@@ -23,22 +23,28 @@ export default async function CatalogoPage() {
         style={{ backgroundImage: "url('/placeholders/hero.svg')" }}
       >
         <div className="relative px-8 py-20 sm:py-28 max-w-2xl bg-linho-50/70 backdrop-blur-[2px]">
-          <p className="uppercase tracking-[0.2em] text-xs text-latao-600 mb-4">Desde há mais de 30 anos</p>
+          <p className="uppercase tracking-[0.2em] text-xs text-latao-600 mb-4">Desde há mais de 30 anos · Plataforma B2B</p>
           <h1 className="font-display italic text-4xl sm:text-5xl text-tinta-900 leading-tight mb-5">
-            Alta qualidade em<br />sofás e mobiliário
+            Sofás e mobiliário<br />para o teu negócio
           </h1>
           <p className="text-tinta-700 mb-8 max-w-md">
-            A Eclove inova há mais de três décadas na qualidade e no requinte — para a tua casa e,
-            em condições exclusivas, para o teu negócio.
+            A Eclove fornece lojas e revendedores do setor do mobiliário com mais de três décadas de
+            qualidade e requinte. Acesso reservado a empresas aprovadas.
           </p>
           <div className="flex gap-4">
-            <a href="#catalogo" className="bg-garrafa-700 text-white px-6 py-3 rounded-md hover:bg-garrafa-600 transition-colors">
-              Ver catálogo
-            </a>
-            {!ehProfissional && (
-              <Link href="/registo-profissional" className="border border-garrafa-700 text-garrafa-700 px-6 py-3 rounded-md hover:bg-linho-100 transition-colors">
-                Sou profissional
-              </Link>
+            {ehProfissional ? (
+              <a href="#catalogo" className="bg-garrafa-700 text-white px-6 py-3 rounded-md hover:bg-garrafa-600 transition-colors">
+                Ver catálogo
+              </a>
+            ) : (
+              <>
+                <Link href="/registo-profissional" className="bg-garrafa-700 text-white px-6 py-3 rounded-md hover:bg-garrafa-600 transition-colors">
+                  Pedir conta de revenda
+                </Link>
+                <Link href="/entrar" className="border border-garrafa-700 text-garrafa-700 px-6 py-3 rounded-md hover:bg-linho-100 transition-colors">
+                  Já sou cliente
+                </Link>
+              </>
             )}
           </div>
         </div>
@@ -49,17 +55,16 @@ export default async function CatalogoPage() {
         <h2 className="font-display text-3xl text-tinta-900 mb-2">As nossas peças</h2>
         <p className="text-tinta-500">
           {ehProfissional ? (
-            "Preços profissionais aplicados à tua conta."
+            "Preços de revenda aplicados à tua conta."
           ) : (
             <>
-              Preços disponíveis para contas profissionais aprovadas. Para clientes finais, os preços
-              ficam sob consulta —{" "}
+              Os preços só ficam visíveis depois de entrares com uma conta de revenda aprovada.{" "}
               <Link href="/registo-profissional" className="underline">
-                pede uma conta profissional
+                Pede acesso
               </Link>{" "}
               ou{" "}
-              <Link href="/contacto" className="underline">
-                pede um orçamento
+              <Link href="/entrar" className="underline">
+                entra na tua conta
               </Link>
               .
             </>
@@ -97,7 +102,7 @@ export default async function CatalogoPage() {
                   return preco.tipo === "profissional" ? (
                     <p className="mt-2 font-semibold">{formatarEuros(preco.valor)}</p>
                   ) : (
-                    <p className="mt-2 font-semibold text-tinta-500">Preço sob consulta</p>
+                    <p className="mt-2 font-semibold text-tinta-500">Preço visível após login</p>
                   );
                 })()}
                 {ehProfissional && produto.quantidadeMinimaB2B > 1 && (

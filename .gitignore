@@ -1,33 +1,19 @@
-# Dependencies
 node_modules/
-
-# Next.js
 .next/
 out/
+dist/
+coverage/
 
-# Production
-build/
-
-# Environment
 .env
 .env.local
-.env.production
-.env.development
+.env.development.local
+.env.production.local
 
-# Logs
 *.log
 npm-debug.log*
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# Prisma
-generated/
-
-# VSCode
-.vscode/
-
-# Windows
-Thumbs.db
 .DS_Store
+Thumbs.db
+
+prisma/*.db
+prisma/*.db-journal

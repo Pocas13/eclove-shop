@@ -36,7 +36,7 @@ export default async function ProdutoPage({ params }: { params: { id: string } }
         {preco.tipo === "profissional" ? (
           <p className="text-2xl font-semibold mb-4">{formatarEuros(preco.valor)}</p>
         ) : (
-          <p className="text-lg font-semibold mb-1 text-tinta-500">Preço sob consulta</p>
+          <p className="text-lg font-semibold mb-1 text-tinta-500">Preço visível após login</p>
         )}
         <p className="text-tinta-700 mb-6 whitespace-pre-line">{produto.descricao}</p>
 
@@ -67,13 +67,13 @@ export default async function ProdutoPage({ params }: { params: { id: string } }
               href="/registo-profissional"
               className="bg-garrafa-700 text-white px-6 py-3 rounded-md text-center hover:bg-garrafa-600 transition-colors"
             >
-              Pedir conta profissional
+              Pedir conta de revenda
             </Link>
             <Link
-              href="/contacto"
+              href="/entrar"
               className="border border-garrafa-700 text-tinta-900 px-6 py-3 rounded-md text-center hover:bg-linho-100 transition-colors"
             >
-              Pedir orçamento
+              Já sou cliente
             </Link>
           </div>
         )}

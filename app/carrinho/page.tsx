@@ -28,13 +28,9 @@ export default async function CarrinhoPage() {
       <div>
         <h1 className="font-display text-3xl mb-4">Carrinho</h1>
         <p className="text-tinta-500">
-          A compra online está disponível apenas para contas profissionais.{" "}
-          <Link href="/contacto" className="underline">
-            Pede um orçamento
-          </Link>{" "}
-          ou{" "}
+          A compra online está disponível apenas para contas de revenda aprovadas.{" "}
           <Link href="/registo-profissional" className="underline">
-            pede uma conta profissional
+            Pede uma conta de revenda
           </Link>
           .
         </p>
