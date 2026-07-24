@@ -1,0 +1,8 @@
+Base local de códigos postais de Portugal utilizada como redundância para o preenchimento automático de moradas.
+
+Fonte dos dados: centraldedados/codigos_postais
+https://github.com/centraldedados/codigos_postais
+
+O repositório indica os CTT como fonte original e publica os dados sob a Public Domain Dedication and License (PDDL) 1.0.
+
+A aplicação consulta esta cópia local para não depender da disponibilidade de serviços externos durante o registo e o checkout.

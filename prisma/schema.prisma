@@ -1,6 +1,3 @@
-// Schema da base de dados — PostgreSQL + Prisma
-// Correr: npx prisma migrate dev --name init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,9 +8,9 @@ datasource db {
 }
 
 enum Role {
-  CLIENTE       // consumidor final (B2C)
-  PROFISSIONAL  // revendedor / profissional (B2B)
-  ADMIN         // gestor do backoffice
+  CLIENTE
+  PROFISSIONAL
+  ADMIN
 }
 
 enum ProfissionalEstado {
@@ -31,120 +28,401 @@ enum EncomendaEstado {
   CANCELADA
 }
 
-enum TipoCliente {
-  B2C
-  B2B
+enum MetodoPagamento {
+  CARTAO
+  MBWAY
+  MULTIBANCO
+  PAYPAL
+  REFERENCIA_OFFLINE
+}
+
+enum MetodoEntrega {
+  LEVANTAMENTO
+  ENTREGA_LOJA
+  TRANSPORTADORA
+}
+
+enum IntegracaoEstado {
+  PENDENTE
+  EM_CURSO
+  SUCESSO
+  ERRO
+}
+
+enum JobEstado {
+  PENDENTE
+  EM_CURSO
+  CONCLUIDO
+  FALHOU
+}
+
+enum MovimentoTipo {
+  ENTRADA
+  SAIDA
+  AJUSTE
+  RESERVA
+  LIBERTACAO
+}
+
+enum CupaoTipo {
+  PERCENTAGEM
+  VALOR_FIXO
+}
+
+enum PontosTipo {
+  COMPRA
+  RESGATE
+  BONUS
+  AJUSTE
 }
 
 model User {
-  id              String    @id @default(cuid())
-  nome            String
-  email           String    @unique
-  passwordHash    String
-  role            Role      @default(CLIENTE)
-  telefone        String?
-  nif             String?
-  // Dados de empresa, só para profissionais
-  empresaNome     String?
-  moradaFiscal    String?
+  id            String   @id @default(cuid())
+  nome          String
+  empresaNome   String?
+  moradaFiscal  String?
   profissionalEstado ProfissionalEstado?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(CLIENTE)
+  telefone      String?
+  nif           String?
+  sageContactId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  enderecos       Endereco[]
-  encomendas      Encomenda[]
-  carrinho        CarrinhoItem[]
+  enderecos  Endereco[]
+  encomendas Encomenda[]
+  carrinho   CarrinhoItem[]
+  favoritos  Favorito[]
+  reviews    Review[]
+  pontos     Pontos?
+  listas     ListaProjeto[]
+  historico  ClienteHistorico[]
 }
 
 model Endereco {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  linha1      String
-  linha2      String?
-  cidade      String
+  id           String  @id @default(cuid())
+  userId       String
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linha1       String
+  linha2       String?
+  numeroPorta  String?
+  andar        String?
+  ladoPorta    String?
+  cidade       String
   codigoPostal String
-  pais        String   @default("Portugal")
-  principal   Boolean  @default(false)
+  pais         String  @default("Portugal")
+  principal    Boolean @default(false)
+
+  @@index([userId])
 }
 
 model Categoria {
-  id       String    @id @default(cuid())
-  nome     String
-  slug     String    @unique
-
-  parentId String?
-  parent   Categoria?  @relation("SubCategorias", fields: [parentId], references: [id])
+  id            String      @id @default(cuid())
+  nome          String
+  slug          String      @unique
+  parentId      String?
+  parent        Categoria?  @relation("SubCategorias", fields: [parentId], references: [id], onDelete: SetNull)
   subcategorias Categoria[] @relation("SubCategorias")
-
-  produtos Produto[]
+  produtos      Produto[]
 
   @@unique([nome, parentId])
+  @@index([parentId])
 }
 
 model Produto {
-  id                String   @id @default(cuid())
-  nome              String
-  slug              String   @unique
-  descricao         String
-  sku               String   @unique
-  categoriaId       String
-  categoria         Categoria @relation(fields: [categoriaId], references: [id])
+  id              String    @id @default(cuid())
+  nome            String
+  slug            String    @unique
+  descricao       String
+  sku             String    @unique
+  categoriaId     String
+  categoria       Categoria @relation(fields: [categoriaId], references: [id])
+  preco           Decimal   @db.Decimal(10, 2)
+  precoProfissional Decimal? @db.Decimal(10, 2)
+  precoPromocional Decimal? @db.Decimal(10, 2)
+  quantidadeMinimaB2B Int @default(1)
+  prazoEntrega    String?
+  fichaTecnicaUrl String?
+  stock           Int       @default(0)
+  pesoKg          Float?
+  material        String?
+  largura_cm      Int?
+  altura_cm       Int?
+  profundidade_cm Int?
+  imagens         String[]
+  ativo           Boolean   @default(true)
+  sageProductId   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  // Preços — o profissional vê precoProfissional, o cliente final vê precoRetalho
-  precoRetalho      Decimal  @db.Decimal(10, 2)
-  precoProfissional Decimal  @db.Decimal(10, 2)
-  quantidadeMinimaB2B Int    @default(1) // qtd mínima para encomenda profissional
+  itensCarrinho   CarrinhoItem[]
+  itensEncomenda  EncomendaItem[]
+  stocks          Stock[]
+  movimentosStock MovimentacaoStock[]
+  alertasStock    AlertaStock[]
+  favoritos       Favorito[]
+  reviews         Review[]
+  listas          ListaProjetoItem[]
 
-  stock             Int      @default(0)
-  material          String?
-  largura_cm        Int?
-  altura_cm         Int?
-  profundidade_cm   Int?
-  imagens           String[] // URLs das imagens
-  ativo             Boolean  @default(true)
+  @@index([categoriaId])
+  @@index([ativo, createdAt])
+}
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+model Stock {
+  id          String   @id @default(cuid())
+  produtoId   String
+  produto     Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  quantidade  Int      @default(0)
+  reservado   Int      @default(0)
+  localizacao String?
+  lote        String?
+  updatedAt   DateTime @updatedAt
 
-  itensCarrinho     CarrinhoItem[]
-  itensEncomenda    EncomendaItem[]
+  @@unique([produtoId, localizacao])
+  @@index([produtoId])
+}
+
+model MovimentacaoStock {
+  id         String        @id @default(cuid())
+  produtoId  String
+  produto    Produto       @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  tipo       MovimentoTipo
+  quantidade Int
+  motivo     String
+  usuario    String
+  referencia String?
+  data       DateTime      @default(now())
+
+  @@index([produtoId, data])
+}
+
+model AlertaStock {
+  id           String    @id @default(cuid())
+  produtoId    String    @unique
+  produto      Produto   @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  minimo       Int
+  ativo        Boolean   @default(true)
+  notificadoEm DateTime?
 }
 
 model CarrinhoItem {
-  id         String   @id @default(cuid())
+  id         String  @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   produtoId  String
-  produto    Produto  @relation(fields: [produtoId], references: [id])
+  produto    Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
   quantidade Int
 
   @@unique([userId, produtoId])
+  @@index([produtoId])
 }
 
 model Encomenda {
-  id            String          @id @default(cuid())
-  numero        String          @unique // ex: ENC-2026-00001
-  userId        String
-  user          User            @relation(fields: [userId], references: [id])
-  tipoCliente   TipoCliente
-  estado        EncomendaEstado @default(PENDENTE)
-  total         Decimal         @db.Decimal(10, 2)
-  moradaEntrega String
-  nifFatura     String?
-  stripePaymentId String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id                String          @id @default(cuid())
+  numero            String          @unique
+  userId            String
+  user              User            @relation(fields: [userId], references: [id])
+  estado            EncomendaEstado @default(PENDENTE)
+  metodoPagamento   MetodoPagamento @default(CARTAO)
+  metodoEntrega      MetodoEntrega   @default(TRANSPORTADORA)
+  clienteNome        String?
+  clienteEmail       String?
+  clienteTelefone    String?
+  subtotal          Decimal         @default(0) @db.Decimal(10, 2)
+  portes            Decimal         @default(0) @db.Decimal(10, 2)
+  desconto          Decimal         @default(0) @db.Decimal(10, 2)
+  total             Decimal         @db.Decimal(10, 2)
+  moradaEntrega     String
+  nifFatura         String?
+  stripePaymentId   String?
+  sageInvoiceId     String?
+  dhlTrackingNumber String?
+  pagaEm            DateTime?
+  faturadaEm        DateTime?
+  enviadaEm         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
-  itens         EncomendaItem[]
+  itens          EncomendaItem[]
+  integracaoLogs IntegracaoLog[]
+
+  @@index([userId, createdAt])
+  @@index([estado, createdAt])
 }
 
 model EncomendaItem {
-  id           String   @id @default(cuid())
-  encomendaId  String
-  encomenda    Encomenda @relation(fields: [encomendaId], references: [id])
-  produtoId    String
-  produto      Produto  @relation(fields: [produtoId], references: [id])
-  quantidade   Int
-  precoUnitario Decimal @db.Decimal(10, 2) // preço aplicado no momento da compra
+  id            String    @id @default(cuid())
+  encomendaId   String
+  encomenda     Encomenda @relation(fields: [encomendaId], references: [id], onDelete: Cascade)
+  produtoId     String
+  produto       Produto   @relation(fields: [produtoId], references: [id])
+  quantidade    Int
+  precoUnitario Decimal   @db.Decimal(10, 2)
+
+  @@index([encomendaId])
+  @@index([produtoId])
+}
+
+model Cupao {
+  id           String    @id @default(cuid())
+  codigo       String    @unique
+  tipo         CupaoTipo
+  desconto     Decimal   @db.Decimal(10, 2)
+  dataInicio   DateTime
+  dataFim      DateTime
+  maximo       Int?
+  usos         Int       @default(0)
+  compraMinima Decimal?  @db.Decimal(10, 2)
+  ativo        Boolean   @default(true)
+
+  @@index([ativo, dataInicio, dataFim])
+}
+
+model Favorito {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  produtoId String
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, produtoId])
+  @@index([produtoId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  produtoId String
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  rating    Int
+  texto     String?
+  aprovado  Boolean  @default(false)
+  data      DateTime @default(now())
+
+  @@unique([userId, produtoId])
+  @@index([produtoId, aprovado])
+}
+
+model Subscritor {
+  id    String   @id @default(cuid())
+  email String   @unique
+  ativo Boolean  @default(true)
+  data  DateTime @default(now())
+}
+
+model Pontos {
+  id        String            @id @default(cuid())
+  userId    String            @unique
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  saldo     Int               @default(0)
+  historico PontosTransacao[]
+}
+
+model PontosTransacao {
+  id        String     @id @default(cuid())
+  pontosId  String
+  pontos    Pontos     @relation(fields: [pontosId], references: [id], onDelete: Cascade)
+  tipo      PontosTipo
+  valor     Int
+  descricao String?
+  data      DateTime   @default(now())
+
+  @@index([pontosId, data])
+}
+
+model IntegracaoLog {
+  id          String           @id @default(cuid())
+  tipo        String
+  estado      IntegracaoEstado @default(PENDENTE)
+  encomendaId String?
+  encomenda   Encomenda?       @relation(fields: [encomendaId], references: [id], onDelete: SetNull)
+  pedido      Json?
+  resposta    Json?
+  erro        String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([tipo, createdAt])
+  @@index([encomendaId])
+}
+
+model IntegrationJob {
+  id           String    @id @default(cuid())
+  tipo         String
+  estado       JobEstado @default(PENDENTE)
+  payload      Json
+  resultado    Json?
+  chaveUnica   String?   @unique
+  tentativas   Int       @default(0)
+  ultimoErro   String?
+  executarApos DateTime  @default(now())
+  processadoEm DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([estado, executarApos])
+}
+
+model SageConnection {
+  id           String   @id @default("principal")
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  scope        String?
+  businessId   String?
+  businessName String?
+  lastError    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+model Catalogo {
+  id          String   @id @default(cuid())
+  titulo      String
+  descricao   String?
+  ficheiroUrl String
+  capaUrl     String?
+  ativo       Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model ListaProjeto {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nome      String
+  cliente   String?
+  notas     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  itens     ListaProjetoItem[]
+  @@index([userId, updatedAt])
+}
+
+model ListaProjetoItem {
+  id        String       @id @default(cuid())
+  listaId   String
+  lista     ListaProjeto @relation(fields: [listaId], references: [id], onDelete: Cascade)
+  produtoId String
+  produto   Produto      @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  quantidade Int         @default(1)
+  notas     String?
+  @@unique([listaId, produtoId])
+}
+
+model ClienteHistorico {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tipo      String
+  titulo    String
+  detalhe   String?
+  autor     String?
+  createdAt DateTime @default(now())
+  @@index([userId, createdAt])
 }

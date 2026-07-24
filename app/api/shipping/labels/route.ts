@@ -1,0 +1,4 @@
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server"; import { getServerSession } from "next-auth"; import { authOptions } from "@/lib/auth"; import { DHLClient } from "@/lib/integracoes/dhl/client";
+export async function POST(req:Request){const s=await getServerSession(authOptions);if((s?.user as any)?.role!=="ADMIN")return NextResponse.json({erro:"Sem autorização"},{status:403});try{const payload=await req.json();if(!process.env.DHL_API_KEY)return NextResponse.json({modo:"exemplo",tracking:`DHL-DEMO-${Date.now()}`,aviso:"Configure as credenciais DHL para gerar uma etiqueta real."});const r=await new DHLClient().request<any>("/shipments",{method:"POST",body:JSON.stringify(payload)});return NextResponse.json(r);}catch(e){return NextResponse.json({erro:e instanceof Error?e.message:"Erro DHL"},{status:500});}}

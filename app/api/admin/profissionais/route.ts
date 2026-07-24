@@ -39,7 +39,10 @@ export async function PATCH(req: Request) {
     data: { profissionalEstado: decisao },
   });
 
-  await emailDecisaoProfissional(user.email, decisao === "APROVADO");
+  await prisma.clienteHistorico.create({ data: { userId: user.id, tipo: "CONTA", titulo: decisao === "APROVADO" ? "Conta aprovada" : "Conta rejeitada", detalhe: "Decisão registada no backoffice.", autor: session?.user?.email || "Admin" } });
+  await Promise.allSettled([
+    emailDecisaoProfissional(user.email, decisao === "APROVADO"),
+  ]);
 
   return NextResponse.json({ ok: true, user });
 }

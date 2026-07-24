@@ -19,7 +19,7 @@ export default function BotaoReencomendar({ encomendaId }: { encomendaId: string
   }
 
   return (
-    <button onClick={reencomendar} disabled={aEnviar} className="text-sm text-garrafa-700 underline disabled:opacity-50">
+    <button onClick={reencomendar} disabled={aEnviar} className="text-sm text-mare-700 underline disabled:opacity-50">
       {aEnviar ? "A adicionar..." : "Encomendar novamente"}
     </button>
   );

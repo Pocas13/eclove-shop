@@ -9,10 +9,10 @@ export default async function AdminProfissionaisPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl mb-6">Aprovação de Profissionais</h1>
+      <h1 className="font-display text-3xl mb-6">Validação de contas</h1>
 
       {pendentes.length === 0 ? (
-        <p className="text-tinta-500">Não há pedidos pendentes.</p>
+        <p className="text-tinta-500">Não há contas pendentes.</p>
       ) : (
         <div className="space-y-4">
           {pendentes.map((p) => (

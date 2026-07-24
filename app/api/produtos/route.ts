@@ -1,13 +1,16 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { contaAprovada } from "@/lib/acesso";
 import { prisma } from "@/lib/prisma";
-import { visibilidadePreco } from "@/lib/precos";
 import { z } from "zod";
 
-// GET /api/produtos?categoria=slug — lista produtos ativos com o preço certo para o utilizador
+// GET /api/produtos?categoria=slug — o preço só é devolvido a utilizadores autenticados
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
+  const podeVerPreco = contaAprovada(session);
   const { searchParams } = new URL(req.url);
   const categoriaSlug = searchParams.get("categoria");
 
@@ -20,17 +23,13 @@ export async function GET(req: Request) {
     orderBy: { createdAt: "desc" },
   });
 
-  const role = (session?.user as any)?.role;
-
   const resultado = produtos.map((p) => ({
     id: p.id,
     nome: p.nome,
     slug: p.slug,
     imagens: p.imagens,
     categoria: p.categoria.nome,
-    preco: visibilidadePreco(p, role),
-    quantidadeMinimaB2B: p.quantidadeMinimaB2B,
-    stock: p.stock,
+    ...(podeVerPreco ? { preco: Number(p.precoPromocional ?? p.precoProfissional ?? p.preco), stock: p.stock, prazoEntrega: p.prazoEntrega } : {}),
   }));
 
   return NextResponse.json(resultado);
@@ -42,10 +41,12 @@ const produtoSchema = z.object({
   descricao: z.string().min(5),
   sku: z.string().min(2),
   categoriaId: z.string(),
-  precoRetalho: z.number().positive(),
-  precoProfissional: z.number().positive(),
-  quantidadeMinimaB2B: z.number().int().positive().default(1),
+  preco: z.number().positive(),
   stock: z.number().int().min(0).default(0),
+  material: z.string().optional(),
+  largura_cm: z.number().int().positive().optional(),
+  altura_cm: z.number().int().positive().optional(),
+  profundidade_cm: z.number().int().positive().optional(),
   imagens: z.array(z.string()).default([]),
 });
 

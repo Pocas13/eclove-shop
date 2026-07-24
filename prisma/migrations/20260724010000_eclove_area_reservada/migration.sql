@@ -1,0 +1,14 @@
+ALTER TABLE "Produto" ADD COLUMN IF NOT EXISTS "precoPromocional" DECIMAL(10,2);
+ALTER TABLE "Produto" ADD COLUMN IF NOT EXISTS "prazoEntrega" TEXT;
+ALTER TABLE "Produto" ADD COLUMN IF NOT EXISTS "fichaTecnicaUrl" TEXT;
+CREATE TABLE IF NOT EXISTS "Catalogo" ("id" TEXT NOT NULL,"titulo" TEXT NOT NULL,"descricao" TEXT,"ficheiroUrl" TEXT NOT NULL,"capaUrl" TEXT,"ativo" BOOLEAN NOT NULL DEFAULT true,"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,CONSTRAINT "Catalogo_pkey" PRIMARY KEY ("id"));
+CREATE TABLE IF NOT EXISTS "ListaProjeto" ("id" TEXT NOT NULL,"userId" TEXT NOT NULL,"nome" TEXT NOT NULL,"cliente" TEXT,"notas" TEXT,"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,"updatedAt" TIMESTAMP(3) NOT NULL,CONSTRAINT "ListaProjeto_pkey" PRIMARY KEY ("id"));
+CREATE TABLE IF NOT EXISTS "ListaProjetoItem" ("id" TEXT NOT NULL,"listaId" TEXT NOT NULL,"produtoId" TEXT NOT NULL,"quantidade" INTEGER NOT NULL DEFAULT 1,"notas" TEXT,CONSTRAINT "ListaProjetoItem_pkey" PRIMARY KEY ("id"));
+CREATE TABLE IF NOT EXISTS "ClienteHistorico" ("id" TEXT NOT NULL,"userId" TEXT NOT NULL,"tipo" TEXT NOT NULL,"titulo" TEXT NOT NULL,"detalhe" TEXT,"autor" TEXT,"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,CONSTRAINT "ClienteHistorico_pkey" PRIMARY KEY ("id"));
+CREATE INDEX IF NOT EXISTS "ListaProjeto_userId_updatedAt_idx" ON "ListaProjeto"("userId","updatedAt");
+CREATE UNIQUE INDEX IF NOT EXISTS "ListaProjetoItem_listaId_produtoId_key" ON "ListaProjetoItem"("listaId","produtoId");
+CREATE INDEX IF NOT EXISTS "ClienteHistorico_userId_createdAt_idx" ON "ClienteHistorico"("userId","createdAt");
+ALTER TABLE "ListaProjeto" ADD CONSTRAINT "ListaProjeto_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ListaProjetoItem" ADD CONSTRAINT "ListaProjetoItem_listaId_fkey" FOREIGN KEY ("listaId") REFERENCES "ListaProjeto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ListaProjetoItem" ADD CONSTRAINT "ListaProjetoItem_produtoId_fkey" FOREIGN KEY ("produtoId") REFERENCES "Produto"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ClienteHistorico" ADD CONSTRAINT "ClienteHistorico_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

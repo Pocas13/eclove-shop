@@ -1,0 +1,3 @@
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server";import { getServerSession } from "next-auth";import { authOptions } from "@/lib/auth";import { prisma } from "@/lib/prisma";export async function GET(req:Request){const s=await getServerSession(authOptions);if((s?.user as any)?.role!=="ADMIN")return NextResponse.json({erro:"Sem autorização"},{status:403});const id=new URL(req.url).searchParams.get("encomendaId");if(!id)return NextResponse.json({erro:"encomendaId obrigatório"},{status:400});const e=await prisma.encomenda.findUnique({where:{id},select:{numero:true,estado:true,sageInvoiceId:true,faturadaEm:true}});return NextResponse.json(e)}

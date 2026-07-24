@@ -1,0 +1,1 @@
+export async function withRetry<T>(fn: () => Promise<T>, tentativas = 3, atrasoMs = 350): Promise<T> { let erro: unknown; for (let i=0;i<tentativas;i++){ try{return await fn();}catch(e){erro=e;if(i<tentativas-1) await new Promise(r=>setTimeout(r, atrasoMs*Math.pow(2,i)));}} throw erro; }

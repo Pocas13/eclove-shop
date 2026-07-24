@@ -1,38 +1,52 @@
 {
-  "name": "eclove-shop",
-  "version": "0.1.0",
+  "name": "eclove",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3002",
+    "dev:alt": "next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3002",
-    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "verify": "prisma validate && prisma generate && tsc --noEmit",
+    "ci:validate": "prisma validate && prisma generate && tsc --noEmit && next build",
+    "clean": "node -e \"const fs=require('fs'); for (const p of ['.next','tsconfig.tsbuildinfo','atualizacao.log']) fs.rmSync(p,{recursive:true,force:true})\"",
+    "db:setup": "prisma migrate dev --name eclove_integracoes && npm run seed",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:validate": "prisma validate",
+    "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "seed:demo": "tsx prisma/seed.ts",
+    "check": "prisma validate && prisma generate && tsc --noEmit && next build",
+    "update:windows": "powershell -ExecutionPolicy Bypass -File .\\scripts\\atualizar.ps1",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "clean:explorer": "powershell -ExecutionPolicy Bypass -File .\\scripts\\limpar-explorer.ps1"
   },
   "dependencies": {
-    "next": "14.2.5",
+    "@prisma/client": "5.17.0",
+    "bcryptjs": "2.4.3",
+    "next": "15.5.21",
+    "next-auth": "4.24.15",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "@prisma/client": "5.17.0",
-    "next-auth": "4.24.7",
-    "bcryptjs": "2.4.3",
-    "zod": "3.23.8",
-    "stripe": "16.2.0",
-    "@stripe/stripe-js": "4.1.0",
-    "zustand": "4.5.4",
-    "resend": "3.5.0"
+    "resend": "3.5.0",
+    "stripe": "22.3.2",
+    "zod": "3.23.8"
   },
   "devDependencies": {
-    "typescript": "5.5.4",
+    "@types/bcryptjs": "2.4.6",
     "@types/node": "20.14.12",
     "@types/react": "18.3.3",
-    "@types/bcryptjs": "2.4.6",
+    "autoprefixer": "10.4.19",
+    "postcss": "8.5.10",
     "prisma": "5.17.0",
     "tailwindcss": "3.4.7",
-    "postcss": "8.4.40",
-    "autoprefixer": "10.4.19",
-    "tsx": "4.16.2"
+    "tsx": "4.16.2",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   }
 }

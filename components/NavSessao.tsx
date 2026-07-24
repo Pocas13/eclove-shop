@@ -9,7 +9,7 @@ export default function NavSessao({ session }: { session: Session | null }) {
     return (
       <>
         <Link href="/entrar">Entrar</Link>
-        <Link href="/registo-profissional">Criar Conta</Link>
+        <Link href="/registo">Criar Conta</Link>
       </>
     );
   }

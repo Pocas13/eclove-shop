@@ -25,7 +25,7 @@ export default function SeletorEstadoEncomenda({ id, estadoAtual }: { id: string
       defaultValue={estadoAtual}
       disabled={aGuardar}
       onChange={(e) => mudarEstado(e.target.value)}
-      className="border border-linho-300 rounded-md p-2 text-sm"
+      className="border border-areia-300 rounded-md p-2 text-sm"
     >
       {ESTADOS.map((estado) => (
         <option key={estado} value={estado}>

@@ -1,9 +1,143 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-linho-50 text-tinta-900 font-sans;
+:root { color-scheme: light; }
+html { scroll-behavior: smooth; }
+body { @apply bg-calcario-50 text-grafite-900 font-sans antialiased; }
+::selection { background: #B79A5B; color: white; }
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-[1380px] px-5 sm:px-8 lg:px-12; }
+  .btn-primary { @apply inline-flex items-center justify-center rounded-full bg-grafite-900 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-barro-600; }
+  .btn-secondary { @apply inline-flex items-center justify-center rounded-full border border-grafite-900 px-6 py-3 text-sm font-semibold transition hover:bg-grafite-900 hover:text-white; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.22em] text-barro-600; }
 }
+
+@layer components {
+  .hero-modern { @apply relative min-h-[640px] overflow-hidden rounded-[2rem] bg-grafite-900 shadow-soft; }
+  .trust-strip { @apply grid overflow-hidden rounded-3xl border border-calcario-200 bg-white shadow-soft sm:grid-cols-2 xl:grid-cols-4; }
+  .trust-item { @apply flex gap-3 border-b border-calcario-200 p-5 last:border-0 sm:[&:nth-child(odd)]:border-r xl:border-b-0 xl:border-r xl:last:border-r-0; }
+  .trust-item b { @apply block text-sm; }
+  .trust-item p { @apply mt-1 text-xs leading-5 text-grafite-500; }
+  .trust-check { @apply grid h-7 w-7 shrink-0 place-items-center rounded-full bg-folha-500 text-xs font-bold text-white; }
+  .section-heading { @apply flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between; }
+  .section-heading h2 { @apply mt-3 font-display text-4xl font-bold tracking-[-.04em] sm:text-5xl; }
+  .section-heading > p { @apply max-w-md text-sm leading-6 text-grafite-500; }
+  .room-card { @apply relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-calcario-100 shadow-soft; }
+  .room-card img { @apply h-full w-full object-cover transition duration-700 group-hover:scale-105; }
+  .room-overlay { @apply absolute inset-0 bg-gradient-to-t from-grafite-900/85 via-transparent to-transparent; }
+  .room-copy { @apply absolute inset-x-0 bottom-0 p-6 text-white; }
+  .room-copy p { @apply text-xs text-white/65; }
+  .room-copy h3 { @apply mt-1 font-display text-2xl font-bold; }
+  .room-copy span { @apply mt-4 inline-block text-sm font-semibold opacity-0 transition group-hover:opacity-100; }
+  .product-card { @apply block; }
+  .product-image { @apply relative aspect-[4/5] overflow-hidden rounded-3xl bg-calcario-100; }
+  .product-image img { @apply h-full w-full object-cover transition duration-700 group-hover:scale-105; }
+  .product-badge { @apply absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider; }
+  .product-favorite { @apply absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white text-xl shadow; }
+  .product-arrow { @apply grid h-9 w-9 place-items-center rounded-full border border-calcario-300 transition group-hover:border-grafite-900 group-hover:bg-grafite-900 group-hover:text-white; }
+  .editorial-card { @apply rounded-[2rem] border border-calcario-200 bg-white p-7 transition hover:-translate-y-1 hover:shadow-soft; }
+  .editorial-card span { @apply text-xs font-bold text-barro-600; }
+  .editorial-card h3 { @apply mt-8 font-display text-2xl font-bold; }
+  .editorial-card p { @apply mt-3 text-sm leading-6 text-grafite-500; }
+  .checkout-card { @apply flex gap-4 rounded-[2rem] border border-calcario-200 bg-white p-5 shadow-soft sm:gap-6 sm:p-7; }
+  .step-number { @apply grid h-9 w-9 shrink-0 place-items-center rounded-full bg-grafite-900 text-sm font-bold text-white; }
+  .checkout-title { @apply font-display text-2xl font-bold; }
+  .checkout-help { @apply mt-1 text-sm text-grafite-500; }
+  .delivery-option { @apply flex cursor-pointer items-start gap-3 rounded-2xl border border-calcario-300 p-4 transition has-[:checked]:border-barro-500 has-[:checked]:bg-barro-500/5 has-[:checked]:ring-1 has-[:checked]:ring-barro-500; }
+  .delivery-option input { @apply mt-1; }
+  .delivery-option b { @apply block; }
+  .delivery-option small { @apply mt-1 block leading-5 text-grafite-500; }
+  .payment-option { @apply flex cursor-pointer items-center gap-2 rounded-2xl border border-calcario-300 p-4 font-semibold has-[:checked]:border-barro-500 has-[:checked]:ring-1 has-[:checked]:ring-barro-500; }
+  .product-detail { @apply rounded-2xl border border-calcario-200 bg-white; }
+  .product-detail summary { @apply cursor-pointer list-none px-5 py-4 font-semibold; }
+  .product-detail div { @apply border-t border-calcario-200 px-5 py-4 text-sm leading-6 text-grafite-500; }
+  .legal-page { @apply container-site max-w-4xl py-16; }
+  .legal-page h1 { @apply mt-3 font-display text-4xl font-bold tracking-[-.04em] sm:text-5xl; }
+  .legal-page h2 { @apply mt-10 font-display text-2xl font-bold; }
+  .legal-page p { @apply mt-4 leading-8 text-grafite-500; }
+  .legal-note { @apply mt-10 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-900; }
+}
+
+
+@layer components {
+  .admin-shell { @apply min-h-[calc(100vh-112px)] bg-calcario-100/70; }
+  .admin-wrap { @apply container-site grid gap-6 py-8 lg:grid-cols-[230px_1fr]; }
+  .admin-sidebar { @apply h-fit rounded-3xl border border-calcario-200 bg-white p-4 shadow-soft lg:sticky lg:top-28; }
+  .admin-link { @apply flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold text-grafite-700 transition hover:bg-calcario-100 hover:text-grafite-900; }
+  .admin-main { @apply min-w-0 rounded-3xl border border-calcario-200 bg-white p-5 shadow-soft sm:p-8; }
+  .metric { @apply rounded-3xl border border-calcario-200 bg-white p-5; }
+  .status-pill { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold; }
+  .table-wrap { @apply overflow-x-auto rounded-2xl border border-calcario-200; }
+}
+
+@layer components {
+  .utility-bar { @apply bg-folha-700 text-white; }
+  .utility-bar > div { @apply flex min-h-9 items-center justify-between gap-4 text-[11px] font-bold uppercase tracking-[.12em]; }
+  .site-header { @apply sticky top-0 z-40 border-b border-calcario-200 bg-calcario-50/95 backdrop-blur-xl; }
+  .header-main { @apply grid min-h-20 grid-cols-[auto_1fr] items-center gap-4 lg:grid-cols-[240px_1fr_auto]; }
+  .brand-area { @apply inline-flex; }
+  .catalog-search { @apply order-3 col-span-2 flex items-center justify-between rounded-xl border border-calcario-300 bg-white px-4 py-3 text-sm text-grafite-500 lg:order-none lg:col-span-1; }
+  .catalog-search b { @apply text-xs uppercase tracking-wider text-grafite-900; }
+  .header-actions { @apply flex items-center justify-end gap-3 text-sm font-semibold; }
+  .header-actions > a:not(.cart-pill), .header-actions > button { @apply hidden xl:inline-flex; }
+  .cart-pill { @apply rounded-xl bg-grafite-900 px-4 py-2.5 text-white; }
+  .category-rail { @apply border-t border-calcario-200 bg-white; }
+  .category-rail-inner { @apply flex gap-7 overflow-x-auto py-3 text-xs font-bold uppercase tracking-[.1em] [scrollbar-width:none]; }
+  .category-rail-inner a { @apply shrink-0 hover:text-folha-700; }
+  .rail-highlight { @apply text-barro-600; }
+  .price-lock { @apply inline-flex items-center gap-2 rounded-lg bg-folha-700/10 px-3 py-2 text-xs font-bold text-folha-700 hover:bg-folha-700 hover:text-white; }
+  .login-gate { @apply rounded-2xl border border-folha-700/20 bg-folha-700/5 p-5; }
+  .login-gate p { @apply mt-2 text-sm leading-6 text-grafite-500; }
+  .login-gate > div { @apply mt-4 flex flex-wrap gap-3; }
+  .rooms-mosaic { @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-12; }
+  .rooms-mosaic > a { @apply lg:col-span-3; }
+  .rooms-mosaic > a:nth-child(1), .rooms-mosaic > a:nth-child(6) { @apply lg:col-span-6; }
+  .rooms-mosaic > a:nth-child(1), .rooms-mosaic > a:nth-child(6) { aspect-ratio: 16/10; }
+  .division-index { @apply grid gap-5 md:grid-cols-2 lg:grid-cols-3; }
+  .division-index .room-card { aspect-ratio: 16/10; }
+}
+
+/* Eclove editorial identity */
+body{background:#f7f7f2;color:#111}
+.eclove-header{@apply sticky top-0 z-40 border-b border-black/10 bg-[#f7f7f2]/95 backdrop-blur-xl}
+.eclove-header-inner{@apply flex h-20 items-center justify-between}
+.eclove-logo{@apply absolute left-1/2 -translate-x-1/2}
+.eclove-actions{@apply ml-auto flex items-center gap-5 text-xs font-bold uppercase tracking-[.12em]}
+.eclove-actions>a:not(.bag-link),.eclove-actions>button{@apply hidden md:inline-flex}
+.bag-link{@apply rounded-full border border-black/20 px-4 py-2 transition hover:border-black hover:bg-black hover:text-white}
+.menu-trigger{@apply relative flex h-12 min-w-[88px] items-center gap-3 rounded-full border border-black/20 bg-white px-4 text-[10px] font-bold uppercase tracking-[.16em] text-black shadow-sm transition hover:border-black hover:shadow-md}
+.menu-trigger>span{@apply absolute left-4 block h-[2px] w-6 rounded-full bg-black transition duration-300}
+.menu-trigger>span:nth-child(1){transform:translateY(-6px)}
+.menu-trigger>span:nth-child(2){transform:translateY(0)}
+.menu-trigger>span:nth-child(3){width:18px;transform:translateY(6px)}
+.menu-trigger>strong{@apply ml-8 font-bold}
+.menu-trigger:focus-visible{@apply outline-none ring-2 ring-black ring-offset-2}
+.menu-backdrop{@apply fixed inset-0 z-50 cursor-default border-0 bg-black/65 p-0 backdrop-blur-sm}
+.menu-drawer{@apply fixed inset-y-0 left-0 z-[60] flex w-[min(94vw,560px)] -translate-x-full flex-col overflow-y-auto border-r border-white/10 bg-[#101411] p-7 text-white shadow-2xl transition duration-500 sm:p-12}.menu-drawer.is-open{@apply translate-x-0}
+.menu-drawer-top{@apply flex items-center justify-between border-b border-white/15 pb-6}
+.menu-kicker{@apply text-[11px] font-bold uppercase tracking-[.22em] text-[#c8ff73]}
+.menu-close{@apply flex items-center gap-3 rounded-full border border-white/20 px-4 py-2 text-[11px] font-bold uppercase tracking-[.14em] text-white transition hover:border-white hover:bg-white hover:text-black}
+.menu-close b{@apply text-xl font-normal leading-none}
+.menu-drawer nav{@apply mt-8 grid}
+.menu-drawer nav a{@apply grid grid-cols-[46px_1fr_auto] items-center border-b border-white/15 py-5 text-white transition hover:border-[#c8ff73] hover:bg-white/[.04] sm:py-6}
+.menu-drawer nav a small{@apply text-[11px] font-bold tracking-[.16em] text-[#c8ff73]}
+.menu-drawer nav a>span{@apply font-display text-3xl font-semibold leading-none text-white sm:text-4xl}
+.menu-drawer nav a>b{@apply text-lg font-normal text-white/60 transition group-hover:text-white}
+.menu-drawer-bottom{@apply mt-12 border-l-2 border-[#c8ff73] bg-white/[.035] p-5 pl-6 sm:mt-auto}
+.menu-drawer-bottom p{@apply text-base font-bold text-white}
+.menu-drawer-bottom span{@apply mt-2 block text-sm leading-6 text-white/75}
+.menu-drawer-bottom a{@apply mt-5 inline-flex border-b border-[#c8ff73] pb-1 text-sm font-bold text-white transition hover:text-[#c8ff73]}
+@media (max-width:640px){.menu-trigger{@apply min-w-12 px-3}.menu-trigger>strong{@apply sr-only}.menu-trigger>span{@apply left-3}.eclove-actions{@apply gap-2}.bag-link{@apply px-3 py-2}}
+.professional-band{@apply mt-24 bg-[#a6ff4d] py-12 text-black}.professional-band>div{@apply grid gap-7 lg:grid-cols-[1.2fr_1fr_auto] lg:items-end}.professional-band span{@apply text-[10px] font-bold tracking-[.2em]}.professional-band h2{@apply mt-3 max-w-xl font-display text-4xl font-bold}.professional-band p{@apply text-sm leading-6}.professional-band a{@apply border-b border-black pb-1 font-bold}
+.eclove-footer{@apply bg-[#111] py-16 text-white}.footer-grid{@apply grid gap-10 md:grid-cols-4}.footer-grid p{@apply mt-5 max-w-sm text-sm leading-6 text-white/50}.footer-grid>div:not(:first-child){@apply grid content-start gap-3 text-sm text-white/55}.footer-grid b{@apply mb-2 text-xs uppercase tracking-[.15em] text-white}.footer-bottom{@apply mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/35 sm:flex-row sm:justify-between}
+
+/* Painel lateral Eclove V5 — CSS explícito para impedir que o drawer fique reduzido ao conteúdo */
+.menu-backdrop{position:fixed!important;inset:0!important;z-index:9998!important;background:rgba(0,0,0,.58)!important;backdrop-filter:blur(3px)!important}
+.menu-drawer{position:fixed!important;top:0!important;bottom:0!important;left:0!important;z-index:9999!important;width:min(92vw,560px)!important;min-height:100dvh!important;display:flex!important;flex-direction:column!important;overflow-y:auto!important;transform:translateX(-105%)!important;background:#101411!important;color:#fff!important;border-right:1px solid rgba(255,255,255,.12)!important;box-shadow:20px 0 70px rgba(0,0,0,.35)!important;padding:32px!important;transition:transform .38s cubic-bezier(.22,1,.36,1)!important}
+.menu-drawer.is-open{transform:translateX(0)!important}
+.menu-trigger{position:relative;z-index:20;display:grid;grid-template-columns:28px auto;align-items:center;column-gap:10px;min-height:44px;color:#111}
+.menu-trigger>span{grid-column:1;display:block;width:26px;height:2px;background:currentColor;border-radius:999px}
+.menu-trigger>strong{grid-column:2;grid-row:1/span 3;font-size:13px;text-transform:uppercase;letter-spacing:.12em}
+@media(max-width:640px){.menu-drawer{width:100vw!important;padding:24px!important}}

@@ -40,12 +40,12 @@ export default function EntrarPage() {
       {erro && <p className="mb-4 text-sm text-red-600">{erro}</p>}
 
       <form onSubmit={submeter} className="space-y-4">
-        <input name="email" type="email" placeholder="Email" required className="w-full border border-linho-300 rounded-md p-3" />
-        <input name="password" type="password" placeholder="Password" required className="w-full border border-linho-300 rounded-md p-3" />
+        <input name="email" type="email" placeholder="Email" required className="w-full border border-areia-300 rounded-md p-3" />
+        <input name="password" type="password" placeholder="Password" required className="w-full border border-areia-300 rounded-md p-3" />
         <button
           type="submit"
           disabled={aEnviar}
-          className="w-full bg-garrafa-700 text-white py-3 rounded-md disabled:opacity-50"
+          className="w-full bg-mare-700 text-white py-3 rounded-md disabled:opacity-50"
         >
           {aEnviar ? "A entrar..." : "Entrar"}
         </button>
@@ -53,8 +53,8 @@ export default function EntrarPage() {
 
       <p className="mt-6 text-sm text-tinta-500">
         Ainda não tens conta?{" "}
-        <Link href="/registo-profissional" className="underline">
-          Pede uma conta de revenda
+        <Link href="/registo" className="underline">
+          Cria uma conta
         </Link>
         .
       </p>

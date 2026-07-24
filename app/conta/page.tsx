@@ -5,6 +5,8 @@ import { formatarEuros } from "@/lib/precos";
 import { redirect } from "next/navigation";
 import BotaoReencomendar from "@/components/BotaoReencomendar";
 
+export const dynamic = "force-dynamic";
+
 const ESTADO_LABEL: Record<string, string> = {
   PENDENTE: "Pendente",
   PAGA: "Paga",
@@ -19,8 +21,6 @@ export default async function ContaPage() {
   if (!session?.user) redirect("/entrar");
 
   const userId = (session.user as any).id;
-  const role = (session.user as any).role;
-  const ehProfissional = role === "PROFISSIONAL" || role === "ADMIN";
 
   const [user, encomendas] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId } }),
@@ -40,37 +40,18 @@ export default async function ContaPage() {
       <h1 className="font-display text-3xl text-tinta-900 mb-2">A Minha Conta</h1>
       <p className="text-tinta-500 mb-8">
         {user?.nome} · {user?.email}
-        {role === "PROFISSIONAL" && (
-          <span className="ml-2 text-xs uppercase bg-linho-100 px-2 py-1 rounded">
-            {user?.profissionalEstado === "APROVADO" ? "Conta profissional aprovada" : "Conta profissional pendente"}
-          </span>
-        )}
       </p>
 
-      {ehProfissional && user?.profissionalEstado === "APROVADO" && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <div className="border border-linho-300 rounded-lg bg-white p-5">
+      {encomendas.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+          <div className="border border-areia-300 rounded-lg bg-white p-5">
             <p className="text-2xl font-display text-tinta-900">{encomendas.length}</p>
             <p className="text-sm text-tinta-500">Encomendas totais</p>
           </div>
-          <div className="border border-linho-300 rounded-lg bg-white p-5">
+          <div className="border border-areia-300 rounded-lg bg-white p-5">
             <p className="text-2xl font-display text-tinta-900">{formatarEuros(totalGasto)}</p>
             <p className="text-sm text-tinta-500">Total investido</p>
           </div>
-          <div className="border border-linho-300 rounded-lg bg-white p-5">
-            <p className="font-medium text-tinta-900">{user?.empresaNome ?? "—"}</p>
-            <p className="text-sm text-tinta-500">NIF {user?.nif}</p>
-          </div>
-        </div>
-      )}
-
-      {role === "PROFISSIONAL" && user?.profissionalEstado === "PENDENTE" && (
-        <div className="border border-latao-500 rounded-lg bg-linho-100 p-5 mb-10">
-          <p className="font-medium text-tinta-900">O teu pedido de conta profissional está a ser analisado.</p>
-          <p className="text-sm text-tinta-700 mt-1">
-            Assim que for aprovado, terás acesso aos preços de grossista e à compra online. Entretanto podes
-            pedir um orçamento em /contacto.
-          </p>
         </div>
       )}
 
@@ -81,10 +62,10 @@ export default async function ContaPage() {
       ) : (
         <div className="space-y-4">
           {encomendas.map((enc) => (
-            <div key={enc.id} className="border border-linho-300 rounded-lg bg-white p-4">
+            <div key={enc.id} className="border border-areia-300 rounded-lg bg-white p-4">
               <div className="flex justify-between items-center mb-2">
                 <p className="font-medium text-tinta-900">{enc.numero}</p>
-                <span className="text-xs uppercase bg-linho-100 px-2 py-1 rounded">
+                <span className="text-xs uppercase bg-areia-100 px-2 py-1 rounded">
                   {ESTADO_LABEL[enc.estado] ?? enc.estado}
                 </span>
               </div>
@@ -98,7 +79,7 @@ export default async function ContaPage() {
                   </li>
                 ))}
               </ul>
-              {ehProfissional && <BotaoReencomendar encomendaId={enc.id} />}
+              <BotaoReencomendar encomendaId={enc.id} />
             </div>
           ))}
         </div>

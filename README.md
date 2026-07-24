@@ -1,78 +1,102 @@
-# Eclove — Plataforma B2B
+# eclove
 
-Loja **exclusivamente para revenda**: lojas e profissionais do setor do mobiliário.
-Não existe canal de cliente final aqui — isso vive num site à parte (Mar e Móveis).
+Showroom profissional e plataforma de revenda eclove.
 
-Preços só ficam visíveis depois de entrar com uma conta de revenda aprovada.
+## Desenvolvimento local
 
-## Stack
-- Next.js 14 (App Router) + TypeScript
-- PostgreSQL + Prisma
-- NextAuth (Auth.js) — papéis: PROFISSIONAL (revenda), ADMIN
-- Tailwind CSS
-- Stripe (pagamentos)
-- Resend (emails transacionais)
+Pasta habitual: `D:\eclove-shop`
 
-## 1. Base de dados
-Cria uma grátis em [neon.tech](https://neon.tech) ou [supabase.com](https://supabase.com) — copia o
-"connection string" para `DATABASE_URL` no `.env`.
-
-## 2. Stripe
-Cria conta em [stripe.com](https://stripe.com) (modo de teste). Copia `STRIPE_SECRET_KEY` e
-`STRIPE_PUBLISHABLE_KEY`. Para o webhook local: `stripe listen --forward-to localhost:3000/api/checkout/webhook`.
-
-## 3. Emails (opcional para começar)
-Conta grátis em [resend.com](https://resend.com) → `RESEND_API_KEY`. Sem chave, os emails ficam só
-registados na consola.
-
-## Instalação
-
-```bash
+```powershell
+cd D:\eclove-shop
 npm install
-cp .env.example .env
-npx prisma migrate dev --name init
-npm run seed
+npx prisma generate
+npx prisma migrate deploy
 npm run dev
 ```
 
-Login admin de teste: `admin@eclove.pt` / `admin123` — muda a password antes de produção.
+Aplicação local: `http://localhost:3002`
 
-## Fluxo de acesso
-1. Uma loja/revendedor pede conta em `/registo-profissional` (fica PENDENTE)
-2. O admin aprova em `/admin/profissionais`
-3. Só depois de aprovado, o utilizador vê preços e pode comprar online
+## Limpar o Explorer do VS Code
 
-## O que já está feito
-- Catálogo com preço oculto até login de revenda aprovado
-- Registo e aprovação de contas de revenda
-- Carrinho, checkout com Stripe, histórico de encomendas
-- Backoffice: dashboard, produtos (criar/editar/desativar, categorias com
-  subcategorias), gestão de encomendas, aprovação de revendedores
-- Emails automáticos (pedidos, aprovações, encomendas)
+Quando um ZIP e extraído por cima da pasta existente, o Windows substitui ficheiros, mas não elimina os antigos. Depois de extrair esta versão, execute:
 
-## Próximos passos sugeridos
-1. Faturação certificada (Vendus, InvoiceXpress, Moloni) — ver `lib/faturacao.ts`
-2. Upload de imagens em produção (trocar armazenamento local por Cloudinary/S3)
-3. Deploy: Vercel + Neon/Supabase + Stripe (modo live) + Resend
-
-## Estrutura
+```powershell
+cd D:\eclove-shop
+npm run clean:explorer
 ```
-app/
-  page.tsx                        catálogo (preço só após login)
-  produtos/[id]/                  ficha de produto
-  carrinho/ checkout/             compra (só revenda aprovada)
-  entrar/                         login
-  registo-profissional/           pedido de conta de revenda
-  conta/                          área do revendedor (histórico, reencomendar)
-  admin/
-    dashboard/ produtos/ produtos/novo/ produtos/[id]/editar/
-    encomendas/ profissionais/
-  api/ ...
 
-lib/
-  prisma.ts auth.ts precos.ts stripe.ts email.ts faturacao.ts
+No VS Code: `Ctrl + Shift + P` → `Developer: Reload Window`.
 
-prisma/
-  schema.prisma    modelo de dados (User, Categoria com subcategorias, Produto, Encomenda...)
-  seed.ts          dados de teste
+O script remove documentação antiga, SQL temporário e cache `.next`. A pasta `node_modules` é preservada, mas fica escondida no Explorer.
+
+## Validação
+
+```powershell
+npx prisma generate
+npm run typecheck
+npm run build
 ```
+
+As credenciais ficam em `.env`/`.env.local` e não devem ser enviadas para o Git.
+
+## Códigos postais
+
+O preenchimento de rua e localidade usa uma base local dividida por prefixos em `public/dados/codigos-postais`. A pesquisa é automática após os sete algarismos e não depende de uma API externa.
+
+## Email do site
+
+O projeto usa o Resend. Os pedidos de acesso, encomendas e respostas são centralizados em `geral@eclove.pt`.
+
+```env
+RESEND_API_KEY="re_..."
+EMAIL_FROM="Eclove <geral@eclove.pt>"
+EMAIL_ADMIN="geral@eclove.pt"
+EMAIL_REPLY_TO="geral@eclove.pt"
+```
+
+O domínio `eclove.pt` deve estar verificado no Resend. O endereço `geral@eclove.pt` deve existir como caixa de correio ou reencaminhamento para receber respostas.
+
+## Vercel
+
+No projeto Vercel, abra `Settings` → `Environment Variables`. Coloque os valores sem aspas e selecione inicialmente `Production`.
+
+Obrigatórias para a publicação atual:
+
+```text
+DATABASE_URL
+NEXTAUTH_SECRET
+NEXTAUTH_URL
+NEXT_PUBLIC_SITE_URL
+RESEND_API_KEY
+EMAIL_FROM
+EMAIL_ADMIN
+EMAIL_REPLY_TO
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+CLOUDINARY_FOLDER
+SAGE_MODE
+```
+
+Valores recomendados depois de o domínio estar ligado:
+
+```text
+NEXTAUTH_URL=https://eclove.pt
+NEXT_PUBLIC_SITE_URL=https://eclove.pt
+EMAIL_FROM=Eclove <geral@eclove.pt>
+EMAIL_ADMIN=geral@eclove.pt
+EMAIL_REPLY_TO=geral@eclove.pt
+SAGE_MODE=disabled
+```
+
+Em `Settings` → `Build & Deployment`:
+
+```text
+Framework Preset: Next.js
+Root Directory: vazio
+Install Command: npm install
+Build Command: npm run vercel-build
+Output Directory: vazio
+```
+
+Depois de alterar variáveis, faça um novo deployment.

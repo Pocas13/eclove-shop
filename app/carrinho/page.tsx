@@ -5,6 +5,8 @@ import { formatarEuros } from "@/lib/precos";
 import LinhaCarrinho from "@/components/LinhaCarrinho";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function CarrinhoPage() {
   const session = await getServerSession(authOptions);
 
@@ -22,28 +24,12 @@ export default async function CarrinhoPage() {
     );
   }
 
-  const role = (session.user as any).role;
-  if (role !== "PROFISSIONAL" && role !== "ADMIN") {
-    return (
-      <div>
-        <h1 className="font-display text-3xl mb-4">Carrinho</h1>
-        <p className="text-tinta-500">
-          A compra online está disponível apenas para contas de revenda aprovadas.{" "}
-          <Link href="/registo-profissional" className="underline">
-            Pede uma conta de revenda
-          </Link>
-          .
-        </p>
-      </div>
-    );
-  }
-
   const itens = await prisma.carrinhoItem.findMany({
     where: { userId: (session.user as any).id },
     include: { produto: true },
   });
 
-  const total = itens.reduce((soma, item) => soma + Number(item.produto.precoProfissional) * item.quantidade, 0);
+  const total = itens.reduce((soma, item) => soma + Number(item.produto.preco) * item.quantidade, 0);
 
   return (
     <div>
@@ -59,15 +45,12 @@ export default async function CarrinhoPage() {
         </p>
       ) : (
         <>
-          <div className="divide-y divide-linho-100 border border-linho-300 rounded-lg bg-white">
+          <div className="divide-y divide-areia-100 border border-areia-300 rounded-lg bg-white">
             {itens.map((item) => (
               <div key={item.id} className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">{item.produto.nome}</p>
-                  <p className="text-sm text-tinta-500">
-                    {formatarEuros(Number(item.produto.precoProfissional))} / unidade
-                    {item.produto.quantidadeMinimaB2B > 1 && ` · qtd. mínima ${item.produto.quantidadeMinimaB2B}`}
-                  </p>
+                  <p className="text-sm text-tinta-500">{formatarEuros(Number(item.produto.preco))} / unidade</p>
                 </div>
                 <LinhaCarrinho produtoId={item.produtoId} quantidadeInicial={item.quantidade} />
               </div>
@@ -76,7 +59,7 @@ export default async function CarrinhoPage() {
 
           <div className="mt-6 flex items-center justify-between">
             <p className="text-xl font-semibold">Total: {formatarEuros(total)}</p>
-            <Link href="/checkout" className="bg-garrafa-700 text-white px-6 py-3 rounded-md">
+            <Link href="/checkout" className="bg-mare-700 text-white px-6 py-3 rounded-md">
               Finalizar compra
             </Link>
           </div>

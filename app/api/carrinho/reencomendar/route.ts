@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -10,11 +12,6 @@ const schema = z.object({ encomendaId: z.string() });
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ erro: "Não autenticado." }, { status: 401 });
-
-  const role = (session.user as any).role;
-  if (role !== "PROFISSIONAL" && role !== "ADMIN") {
-    return NextResponse.json({ erro: "Disponível apenas para contas profissionais." }, { status: 403 });
-  }
 
   const { encomendaId } = schema.parse(await req.json());
   const userId = (session.user as any).id;

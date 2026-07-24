@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -23,18 +25,9 @@ const adicionarSchema = z.object({
 });
 
 // POST /api/carrinho — adiciona um produto ao carrinho (ou soma quantidade se já existir)
-// Só clientes com conta PROFISSIONAL aprovada podem comprar, já que os preços B2C ficam sob consulta
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ erro: "Não autenticado." }, { status: 401 });
-
-  const role = (session.user as any).role;
-  if (role !== "PROFISSIONAL" && role !== "ADMIN") {
-    return NextResponse.json(
-      { erro: "A compra online está disponível apenas para contas de revenda aprovadas. Pede acesso em /registo-profissional." },
-      { status: 403 }
-    );
-  }
 
   const { produtoId, quantidade } = adicionarSchema.parse(await req.json());
 

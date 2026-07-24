@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -10,21 +12,24 @@ const estadoSchema = z.object({
 });
 
 // PATCH /api/admin/encomendas/:id — muda o estado da encomenda
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if ((session?.user as any)?.role !== "ADMIN") {
     return NextResponse.json({ erro: "Sem permissões." }, { status: 403 });
   }
 
   const { estado } = estadoSchema.parse(await req.json());
+  const { id } = await params;
 
   const encomenda = await prisma.encomenda.update({
-    where: { id: params.id },
+    where: { id },
     data: { estado },
     include: { user: true },
   });
 
-  await emailMudancaEstadoEncomenda(encomenda.user.email, encomenda.numero, estado);
+  await Promise.allSettled([
+    emailMudancaEstadoEncomenda(encomenda.user.email, encomenda.numero, estado),
+  ]);
 
   return NextResponse.json(encomenda);
 }

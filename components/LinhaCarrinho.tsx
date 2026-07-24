@@ -35,11 +35,11 @@ export default function LinhaCarrinho({
 
   return (
     <div className="flex items-center gap-3">
-      <button onClick={() => atualizar(quantidade - 1)} className="w-8 h-8 border border-linho-300 rounded-md" disabled={aGuardar}>
+      <button onClick={() => atualizar(quantidade - 1)} className="w-8 h-8 border border-areia-300 rounded-md" disabled={aGuardar}>
         −
       </button>
       <span className="w-6 text-center">{quantidade}</span>
-      <button onClick={() => atualizar(quantidade + 1)} className="w-8 h-8 border border-linho-300 rounded-md" disabled={aGuardar}>
+      <button onClick={() => atualizar(quantidade + 1)} className="w-8 h-8 border border-areia-300 rounded-md" disabled={aGuardar}>
         +
       </button>
       <button onClick={remover} className="text-sm text-red-600 ml-2" disabled={aGuardar}>

@@ -26,9 +26,8 @@ export const authOptions: NextAuthOptions = {
         const passwordValida = await bcrypt.compare(credentials.password, user.passwordHash);
         if (!passwordValida) return null;
 
-        // Profissional só pode entrar depois de aprovado
-        if (user.role === "PROFISSIONAL" && user.profissionalEstado !== "APROVADO") {
-          throw new Error("A tua conta profissional ainda está a aguardar aprovação.");
+        if (user.role !== "ADMIN" && user.profissionalEstado !== "APROVADO") {
+          throw new Error("A tua conta ainda está a aguardar validação pela Eclove.");
         }
 
         return {
@@ -36,6 +35,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.nome,
           role: user.role,
+          profissionalEstado: user.profissionalEstado,
         } as any;
       },
     }),
@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.id = (user as any).id;
+        token.profissionalEstado = (user as any).profissionalEstado;
       }
       return token;
     },
@@ -52,6 +53,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
+        (session.user as any).profissionalEstado = token.profissionalEstado;
       }
       return session;
     },

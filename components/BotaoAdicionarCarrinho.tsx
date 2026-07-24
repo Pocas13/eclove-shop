@@ -35,7 +35,7 @@ export default function BotaoAdicionarCarrinho({ produtoId }: { produtoId: strin
       <button
         onClick={adicionar}
         disabled={aEnviar}
-        className="bg-garrafa-700 text-white px-6 py-3 rounded-md hover:bg-garrafa-600 transition-colors disabled:opacity-50"
+        className="bg-mare-700 text-white px-6 py-3 rounded-md hover:bg-mare-600 transition-colors disabled:opacity-50"
       >
         {aEnviar ? "A adicionar..." : "Adicionar ao carrinho"}
       </button>

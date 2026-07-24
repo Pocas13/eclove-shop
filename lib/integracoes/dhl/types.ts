@@ -1,0 +1,1 @@
+export type MoradaDHL={pais:string;codigoPostal:string;cidade:string;linha1?:string}; export type VolumeDHL={pesoKg:number;comprimentoCm:number;larguraCm:number;alturaCm:number}; export type CotacaoDHL={servico:string;descricao:string;preco:number;moeda:"EUR";diasUteis?:number}; export type PedidoEnvioDHL={referencia:string;origem:MoradaDHL;destino:MoradaDHL;volumes:VolumeDHL[]};

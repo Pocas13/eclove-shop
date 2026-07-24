@@ -1,0 +1,1 @@
+import { criarJob } from "./queue"; export const eventos={pagamentoConfirmado:(encomendaId:string)=>criarJob("EMITIR_FATURA_SAGE",{encomendaId},`fatura:${encomendaId}`),stockAlterado:(produtoId:string)=>criarJob("SINCRONIZAR_STOCK",{produtoId})};

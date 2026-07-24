@@ -2,8 +2,11 @@ import { prisma } from "@/lib/prisma";
 import FormularioProduto from "@/components/FormularioProduto";
 import { notFound } from "next/navigation";
 
-export default async function EditarProdutoPage({ params }: { params: { id: string } }) {
-  const produto = await prisma.produto.findUnique({ where: { id: params.id } });
+export const dynamic = "force-dynamic";
+
+export default async function EditarProdutoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const produto = await prisma.produto.findUnique({ where: { id } });
   if (!produto) notFound();
 
   return (
@@ -13,12 +16,11 @@ export default async function EditarProdutoPage({ params }: { params: { id: stri
         produtoExistente={{
           id: produto.id,
           nome: produto.nome,
+          slug: produto.slug,
           descricao: produto.descricao,
           sku: produto.sku,
           categoriaId: produto.categoriaId,
-          precoRetalho: Number(produto.precoRetalho),
-          precoProfissional: Number(produto.precoProfissional),
-          quantidadeMinimaB2B: produto.quantidadeMinimaB2B,
+          preco: Number(produto.preco),
           stock: produto.stock,
           material: produto.material,
           largura_cm: produto.largura_cm,
